@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -27,7 +27,6 @@ const formSchema = z.object({
 });
 
 const SignInView = () => {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,10 +46,31 @@ const SignInView = () => {
       {
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
-          router.push("/");
+          setIsLoading(false);
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+          setIsLoading(false);
+        },
+      }
+    );
+  };
+
+  const onSocial = (provider: "github" | "google") => {
+    setError(null);
+    setIsLoading(true);
+
+    authClient.signIn.social(
+      {
+        provider,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
           setIsLoading(false);
         },
         onError: ({ error }) => {
@@ -131,19 +151,21 @@ const SignInView = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <Button
                     disabled={isLoading}
+                    onClick={() => onSocial("google")}
                     variant="outline"
                     type="button"
                     className="w-full"
                   >
-                    Google
+                    <FaGoogle />
                   </Button>
                   <Button
                     disabled={isLoading}
+                    onClick={() => onSocial("github")}
                     variant="outline"
                     type="button"
                     className="w-full"
                   >
-                    Github
+                    <FaGithub />
                   </Button>
                 </div>
 
