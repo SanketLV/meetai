@@ -141,11 +141,23 @@ const CompletedState = ({ data }: Props) => {
         </TabsContent>
         <TabsContent value="recording">
           <div className="bg-white rounded-lg border px-4 py-5">
-            <video
-              src={data.recordingUrl!}
-              className="w-full rounded-lg"
-              controls
-            />
+            {data.recordingUrl ? (
+              <video
+                src={data.recordingUrl}
+                className="w-full rounded-lg"
+                controls
+                onError={(e) => {
+                  console.error('Failed to load video:', e);
+                  // Consider showing an error state to the user here
+                }}
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="flex items-center justify-center h-48 text-muted-foreground">
+                No recording available
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>
