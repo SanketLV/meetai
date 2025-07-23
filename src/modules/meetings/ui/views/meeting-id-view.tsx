@@ -46,7 +46,11 @@ const MeetingIdView = ({ meetingId }: Props) => {
         await queryClient.invalidateQueries(
           trpc.meetings.getMany.queryOptions({})
         );
-        // TODO: Invalidate free tier usage
+
+        await queryClient.invalidateQueries(
+          trpc.premium.getFreeUsage.queryOptions()
+        );
+
         router.push("/meetings");
       },
       onError: (error) => {
